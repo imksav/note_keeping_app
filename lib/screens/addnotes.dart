@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, deprecated_member_use, unnecessary_brace_in_string_interps, avoid_print
+// ignore_for_file: prefer_const_constructors, deprecated_member_use, unnecessary_brace_in_string_interps, avoid_print, unused_field
 
 import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
@@ -12,9 +12,6 @@ class AddNotes extends StatefulWidget {
 }
 
 class _AddNotesState extends State<AddNotes> {
-  double? _height;
-  double? _width;
-
   String? _setTime, _setDate;
 
   String? _hour, _minute, _time;
@@ -24,12 +21,12 @@ class _AddNotesState extends State<AddNotes> {
   DateTime selectedDate = DateTime.now();
 
   TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _timeController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
 
-  Future<Null> _selectDate(BuildContext context) async {
+  Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
@@ -37,23 +34,25 @@ class _AddNotesState extends State<AddNotes> {
         firstDate: DateTime(2015),
         lastDate: DateTime(2101));
     if (picked != null)
+      // ignore: curly_braces_in_flow_control_structures
       setState(() {
         selectedDate = picked;
         _dateController.text = DateFormat.yMd().format(selectedDate);
       });
   }
 
-  Future<Null> _selectTime(BuildContext context) async {
+  Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: selectedTime,
     );
     if (picked != null)
+      // ignore: curly_braces_in_flow_control_structures
       setState(() {
         selectedTime = picked;
         _hour = selectedTime.hour.toString();
         _minute = selectedTime.minute.toString();
-        _time = _hour! + ' : ' + _minute!;
+        _time = '${_hour!} : ${_minute!}';
         _timeController.text = _time!;
         _timeController.text = formatDate(
             DateTime(2019, 08, 1, selectedTime.hour, selectedTime.minute),

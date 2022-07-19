@@ -270,6 +270,10 @@ class _SignupScreenState extends State<SignupScreen> {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) => {postDetailsToFirestore()})
+          // Navigator.of(context)
+          //     .pushAndRemoveUntil(
+          //         MaterialPageRoute(builder: (context) => SigninScreen()),
+          //         ((route) => false))
           .catchError((e) {
         showDialog(
             context: context,

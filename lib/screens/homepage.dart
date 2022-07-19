@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:note_keeping_app/models/user_model.dart';
+import 'package:note_keeping_app/screens/notedescription.dart';
 import '../libraries.dart';
 
 class HomePage extends StatefulWidget {
@@ -57,37 +58,64 @@ class _HomePageState extends State<HomePage> {
           IconButton(onPressed: () {}, icon: const Icon(Icons.logout))
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-            itemCount: 5,
-            itemBuilder: (BuildContext context, int index) => Card(
-                  color: Colors.teal[600],
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(loggedInUser.uid)
+            .collection('notes')
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return ListView(
+            children: snapshot.data!.docs.map((document) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: ((context) {
+                    return NoteDescription(
+                        title: document['title'],
+                        description: document['description'],
+                        createdDate: document['createdDate'],
+                        createdTime: document['createdTime']);
+                  })));
+                },
+                child: Card(
+                  color: Colors.white,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       ListTile(
-                        leading: Icon(
-                          Icons.note,
-                          color: Colors.white,
-                        ),
+                        leading: CircleAvatar(
+                            child: Image.asset(
+                                "assets/images/sikshyatechnology.jpg")),
+                        iconColor: Colors.black,
                         title: Text(
-                          "_title",
-                          style: TextStyle(color: Colors.white, fontSize: 20.0),
+                          document['title'],
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 30.0),
                         ),
                         subtitle: Text(
-                          "_description",
-                          style: TextStyle(fontSize: 15.0, color: Colors.grey),
+                          document['description'],
+                          style: TextStyle(
+                              fontSize: 20.0, color: Colors.grey[700]),
                         ),
                         isThreeLine: true,
                         trailing: Icon(
                           Icons.delete,
                           color: Colors.red,
                         ),
-                      )
+                      ),
                     ],
                   ),
-                )),
+                ),
+              );
+            }).toList(),
+          );
+        },
       ),
     );
   }

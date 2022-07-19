@@ -1,16 +1,38 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:note_keeping_app/models/user_model.dart';
 import '../libraries.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final String? userId;
+  const HomePage({Key? key, this.userId}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      loggedInUser = UserModel.fromMap(value.data());
+      setState(() {
+        loggedInUser = loggedInUser;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +41,7 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const AddNotes(),
+              builder: (context) => AddNotes(userId: loggedInUser.uid),
             ),
           );
         },
@@ -35,44 +57,37 @@ class _HomePageState extends State<HomePage> {
           IconButton(onPressed: () {}, icon: const Icon(Icons.logout))
         ],
       ),
-      body: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        color: Color.fromARGB(255, 9, 144, 159),
-        elevation: 10.0,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView.builder(
-              itemCount: 5,
-              itemBuilder: (BuildContext context, int index) => Card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          leading: Icon(
-                            Icons.note,
-                            color: Color.fromARGB(255, 15, 180, 21),
-                          ),
-                          title: Text(
-                            "_title",
-                            style: TextStyle(
-                                color: Colors.amber[900], fontSize: 20.0),
-                          ),
-                          subtitle: Text(
-                            "_description",
-                            style: TextStyle(fontSize: 15.0),
-                          ),
-                          isThreeLine: true,
-                          trailing: Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
-                        )
-                      ],
-                    ),
-                  )),
-        ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+            itemCount: 5,
+            itemBuilder: (BuildContext context, int index) => Card(
+                  color: Colors.teal[600],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        leading: Icon(
+                          Icons.note,
+                          color: Colors.white,
+                        ),
+                        title: Text(
+                          "_title",
+                          style: TextStyle(color: Colors.white, fontSize: 20.0),
+                        ),
+                        subtitle: Text(
+                          "_description",
+                          style: TextStyle(fontSize: 15.0, color: Colors.grey),
+                        ),
+                        isThreeLine: true,
+                        trailing: Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                      )
+                    ],
+                  ),
+                )),
       ),
     );
   }

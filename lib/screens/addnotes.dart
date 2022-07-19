@@ -1,11 +1,14 @@
 // ignore_for_file: prefer_const_constructors, deprecated_member_use, unnecessary_brace_in_string_interps, avoid_print, unused_field
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
 import 'package:intl/intl.dart';
 
 class AddNotes extends StatefulWidget {
-  const AddNotes({Key? key}) : super(key: key);
+  String? userId;
+
+  AddNotes({key: Key, required this.userId});
 
   @override
   State<AddNotes> createState() => _AddNotesState();
@@ -134,13 +137,19 @@ class _AddNotesState extends State<AddNotes> {
               SizedBox(height: 20.0),
               RaisedButton(
                 onPressed: () {
+                  postNotes(
+                      widget.userId,
+                      _titleController.text,
+                      _descriptionController.text,
+                      _dateController.text,
+                      _timeController.text);
                   Navigator.pop(context, {
                     'title': _titleController.text,
                     'description': _descriptionController.text,
                     'date': _dateController.text,
                   });
                   print(
-                      "${_titleController.text}\n${_descriptionController.text}\n${_dateController.text}\n${_timeController.text}");
+                      "${_titleController.text}\n${_descriptionController.text}\n${_dateController.text}\n${_timeController.text}\n${widget.userId}");
                 },
                 child: Text('Add Note'),
               ),
@@ -149,5 +158,18 @@ class _AddNotesState extends State<AddNotes> {
         ),
       ),
     );
+  }
+
+  postNotes(userId, title, description, date, time) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('notes')
+        .add({
+      'title': title,
+      'description': description,
+      'createdDate': date,
+      'createdTime': time
+    });
   }
 }

@@ -5,16 +5,28 @@ import 'package:flutter/material.dart';
 import 'package:date_format/date_format.dart';
 import 'package:intl/intl.dart';
 
-class AddNotes extends StatefulWidget {
+class UpdateNotes extends StatefulWidget {
   String? userId;
-
-  AddNotes({key: Key, required this.userId});
+  String? noteId;
+  String? title;
+  String? description;
+  String? createdDate;
+  String? createdTime;
+  UpdateNotes({
+    Key? key,
+    required this.userId,
+    required this.noteId,
+    required this.title,
+    required this.description,
+    required this.createdDate,
+    required this.createdTime,
+  }) : super(key: key);
 
   @override
-  State<AddNotes> createState() => _AddNotesState();
+  State<UpdateNotes> createState() => _UpdateNotesState();
 }
 
-class _AddNotesState extends State<AddNotes> {
+class _UpdateNotesState extends State<UpdateNotes> {
   String? _setTime, _setDate;
 
   String? _hour, _minute, _time;
@@ -80,17 +92,15 @@ class _AddNotesState extends State<AddNotes> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.0,
-        title: Text('Add Notes',
-            style: TextStyle(color: Colors.black, fontSize: 25.0)),
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: Icon(
-            Icons.arrow_back,
-            color: Colors.blue,
-          ),
+        title: Text(
+          'Update Notes',
+          style: TextStyle(color: Colors.blue, fontSize: 30.0),
         ),
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(Icons.arrow_back_ios_new_sharp, color: Colors.blue)),
       ),
       body: Center(
         child: Padding(
@@ -107,7 +117,7 @@ class _AddNotesState extends State<AddNotes> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    labelText: 'Enter Title',
+                    labelText: 'Title',
                     hintText: 'Enter title of your note........'),
               ),
               SizedBox(height: 20.0),
@@ -128,8 +138,8 @@ class _AddNotesState extends State<AddNotes> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    labelText: 'Enter Date',
-                    hintText: 'Enter date of your note........'),
+                    labelText: 'Enter Modify Date',
+                    hintText: 'Enter modify date of your note........'),
                 onTap: () {
                   _selectDate(context);
                 },
@@ -141,8 +151,8 @@ class _AddNotesState extends State<AddNotes> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    labelText: 'Enter Time',
-                    hintText: 'Enter time of your note........'),
+                    labelText: 'Enter Modify Time',
+                    hintText: 'Enter modify time of your note........'),
                 onTap: () {
                   _selectTime(context);
                 },
@@ -150,23 +160,15 @@ class _AddNotesState extends State<AddNotes> {
               SizedBox(height: 20.0),
               RaisedButton(
                 onPressed: () {
-                  postNotes(
-                      widget.userId,
-                      _titleController.text,
-                      _descriptionController.text,
-                      _dateController.text,
-                      _timeController.text);
-                  Navigator.pop(context, {
-                    'title': _titleController.text,
-                    'description': _descriptionController.text,
-                    'date': _dateController.text,
-                  });
-                  print(
-                      "${_titleController.text}\n${_descriptionController.text}\n${_dateController.text}\n${_timeController.text}\n${widget.userId}");
-                  getDocumentID();
-                  print("================");
+                  print(widget.noteId);
+                  updateUser(
+                    _titleController.text,
+                    _descriptionController.text,
+                    _dateController.text,
+                    _timeController.text,
+                  );
                 },
-                child: Text('Add Note'),
+                child: Text('Update Note'),
               ),
             ],
           ),
@@ -175,19 +177,17 @@ class _AddNotesState extends State<AddNotes> {
     );
   }
 
-  postNotes(userId, title, description, date, time) {
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('notes')
-        .add({
-      'title': title,
-      'description': description,
-      'createdDate': date,
-      'createdTime': time,
-      'updatedDate': date,
-      'updatedTime': time,
-    });
+  Future<void> updateUser(title, description, date, time) {
+    return FirebaseFirestore.instance
+        .doc('users/${widget.userId}/notes/${widget.noteId}')
+        .update({
+          'title': title,
+          'description': description,
+          'updatedDate': date,
+          'updatedTime': time,
+        })
+        .then((value) => Navigator.pop(context))
+        .catchError((error) => print("Failed to update user: $error"));
   }
 
   getDocumentID() {

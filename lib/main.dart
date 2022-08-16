@@ -1,6 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:note_keeping_app/screens/signin.dart';
+// ignore: depend_on_referenced_packages
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:note_keeping_app/libraries.dart';
+
+import 'package:note_keeping_app/screens/signin.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +21,18 @@ class MyApp extends StatelessWidget {
       color: Colors.white,
       debugShowCheckedModeBanner: false,
       title: 'Note Keeping App',
-      home: SigninScreen(),
+      home: Scaffold(
+        body: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return HomePage();
+            } else {
+              return SigninScreen();
+            }
+          },
+        ),
+      ),
     );
   }
 }

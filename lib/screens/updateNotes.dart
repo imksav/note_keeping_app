@@ -110,15 +110,17 @@ class _UpdateNotesState extends State<UpdateNotes> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 20.0),
-              TextField(
+              TextFormField(
+                initialValue: widget.title,
                 textInputAction: TextInputAction.next,
-                controller: _titleController,
+                // controller: _titleController,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                     labelText: 'Title',
-                    hintText: 'Enter title of your note........'),
+                    // label: Text(widget.title.toString()),
+                    hintText: widget.title),
               ),
               SizedBox(height: 20.0),
               TextField(

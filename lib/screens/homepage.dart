@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:note_keeping_app/models/user_model.dart';
 import 'package:note_keeping_app/screens/notedescription.dart';
+import 'package:note_keeping_app/screens/signin.dart';
 import 'package:note_keeping_app/screens/updateNotes.dart';
 import '../libraries.dart';
 
@@ -67,7 +68,9 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {},
           ),
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                logout(context);
+              },
               icon: const Icon(Icons.logout, color: Colors.blue))
         ],
       ),
@@ -158,6 +161,15 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   RaisedButton(
                                     elevation: 3.0,
+                                    onPressed: () {},
+                                    child: Icon(
+                                      Icons.share,
+                                      color: Colors.white,
+                                    ),
+                                    color: Colors.blue,
+                                  ),
+                                  RaisedButton(
+                                    elevation: 3.0,
                                     onPressed: () {
                                       FirebaseFirestore.instance
                                           .collection('users')
@@ -185,5 +197,12 @@ class _HomePageState extends State<HomePage> {
         },
       ),
     );
+  }
+
+  Future<void> logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const SigninScreen()));
   }
 }

@@ -1,11 +1,11 @@
 // ignore_for_file: deprecated_member_use
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:note_keeping_app/models/user_model.dart';
 import 'package:note_keeping_app/screens/notedescription.dart';
-import 'package:note_keeping_app/screens/signin.dart';
 import 'package:note_keeping_app/screens/updateNotes.dart';
 import '../libraries.dart';
 
@@ -60,6 +60,17 @@ class _HomePageState extends State<HomePage> {
           color: Colors.blue,
         ),
         actions: [
+          IconButton(
+            color: Colors.blue,
+            onPressed: () {
+              // method to show the search bar
+              showSearch(
+                  context: context,
+                  // delegate to customize the search bar
+                  delegate: CustomSearchDelegate());
+            },
+            icon: const Icon(Icons.search),
+          ),
           IconButton(
             icon: const Icon(
               Icons.notifications,
@@ -161,7 +172,104 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   RaisedButton(
                                     elevation: 3.0,
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text("Share To"),
+                                              // content: Text(e!.message),
+                                              content: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        const url =
+                                                            'https://facebook.com';
+                                                        if (await canLaunch(
+                                                            url)) {
+                                                          await launch(url);
+                                                        } else {
+                                                          throw 'Could not launch $url';
+                                                        }
+                                                      },
+                                                      child: Icon(
+                                                        FontAwesomeIcons
+                                                            .facebook,
+                                                        size: 36.0,
+                                                        color: Colors.blue,
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        const url =
+                                                            'https://instagram.com';
+                                                        if (await canLaunch(
+                                                            url)) {
+                                                          await launch(url);
+                                                        } else {
+                                                          throw 'Could not launch $url';
+                                                        }
+                                                      },
+                                                      child: Icon(
+                                                        FontAwesomeIcons
+                                                            .instagram,
+                                                        size: 36.0,
+                                                        color: Colors.red,
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        const url =
+                                                            'https://linkedin.com/in/';
+                                                        if (await canLaunch(
+                                                            url)) {
+                                                          await launch(url);
+                                                        } else {
+                                                          throw 'Could not launch $url';
+                                                        }
+                                                      },
+                                                      child: Icon(
+                                                        FontAwesomeIcons
+                                                            .linkedin,
+                                                        size: 36.0,
+                                                        color: Colors.blue,
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        const url =
+                                                            'https://twitter.com';
+                                                        if (await canLaunch(
+                                                            url)) {
+                                                          await launch(url);
+                                                        } else {
+                                                          throw 'Could not launch $url';
+                                                        }
+                                                      },
+                                                      child: Icon(
+                                                        FontAwesomeIcons
+                                                            .twitter,
+                                                        size: 36.0,
+                                                        color: Colors.blue,
+                                                      ),
+                                                    ),
+                                                  ]),
+                                              backgroundColor: Colors.white,
+                                              actions: [
+                                                IconButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    icon: const Icon(
+                                                        Icons.exit_to_app))
+                                              ],
+                                            );
+                                          });
+                                    },
                                     child: Icon(
                                       Icons.share,
                                       color: Colors.white,
@@ -204,5 +312,16 @@ class _HomePageState extends State<HomePage> {
     // ignore: use_build_context_synchronously
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const SigninScreen()));
+  }
+
+  _launchURL(shareUrl) {
+    print("facebook");
+    launch(shareUrl);
+    // const url = shareUrl;
+    // if (await canLaunch(url)) {
+    //   await launch(url);
+    // } else {
+    //   throw 'Could not launch $url';
+    // }
   }
 }

@@ -322,12 +322,10 @@ class _SignupScreenState extends State<SignupScreen> {
             actions: [
               IconButton(
                   onPressed: () {
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => ImageUpload(
-                    //               userId: userModel.uid,
-                    //             )));
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => SigninScreen()),
+                        (route) => false);
                   },
                   icon: const Icon(Icons.exit_to_app))
             ],

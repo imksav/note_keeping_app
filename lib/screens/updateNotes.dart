@@ -111,9 +111,9 @@ class _UpdateNotesState extends State<UpdateNotes> {
             children: [
               SizedBox(height: 20.0),
               TextFormField(
-                initialValue: widget.title,
+                // initialValue: widget.title,
                 textInputAction: TextInputAction.next,
-                // controller: _titleController,
+                controller: _titleController,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
